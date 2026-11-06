@@ -1,0 +1,13 @@
+run,group,quant,scale,weight_decay,seed,steps,train_size,batch_size,n_train_max,exact_n,extrap,c25,c50,c100,coin50,L0,zero_frac
+runs/rule\nope_fixed_wd0.3_seed100,rule,ternary,fixed,0.3,100,30000,500,256,20,27,7,0.08,4.32,9.86,2.01,6004,0.524
+runs/rule\nope_fixed_wd0.3_seed101,rule,ternary,fixed,0.3,101,30000,500,256,25,30,5,0.03,6.32,16.56,-7.68,6007,0.524
+runs/rule\nope_fixed_wd0.3_seed102,rule,ternary,fixed,0.3,102,30000,500,256,24,65,41,0.01,0.27,0.67,1.82,6373,0.495
+runs/rule\nope_fixed_wd1.0_seed100,rule,ternary,fixed,1.0,100,30000,500,256,20,190,170,0.01,0.01,0.05,-0.25,962,0.924
+runs/rule\nope_fixed_wd1.0_seed101,rule,ternary,fixed,1.0,101,30000,500,256,25,15,-10,9.42,20.08,44.03,-0.58,1299,0.897
+runs/rule\nope_fixed_wd1.0_seed102,rule,ternary,fixed,1.0,102,30000,500,256,24,0,-24,9.65,9.68,9.71,0.71,1026,0.919
+runs/rule\nope_fixed_wd3.0_seed100,rule,ternary,fixed,3.0,100,30000,500,256,20,4,-16,2.8,3.25,3.9,6.91,161,0.987
+runs/rule\nope_fixed_wd3.0_seed101,rule,ternary,fixed,3.0,101,30000,500,256,25,1,-24,55.23,108.11,214.23,5.61,184,0.985
+runs/rule\nope_fixed_wd3.0_seed102,rule,ternary,fixed,3.0,102,30000,500,256,24,22,-2,0.6,1.85,4.63,12.9,173,0.986
+runs/rule\nope_tail_p0.05_seed100,rule,ternary,per_tensor,0.0,100,30000,500,256,133,32,-101,0.01,6.38,13.69,0.09,8515,0.325
+runs/rule\nope_tail_p0.05_seed101,rule,ternary,per_tensor,0.0,101,30000,500,256,173,100,-73,0.0,0.0,0.31,-0.1,8144,0.354
+runs/rule\nope_tail_p0.05_seed102,rule,ternary,per_tensor,0.0,102,30000,500,256,163,75,-88,0.0,0.01,1.73,-0.12,8243,0.346

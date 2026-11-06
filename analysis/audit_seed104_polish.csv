@@ -1,0 +1,5 @@
+run,ckpt,ckpt_step,group,task,quant,scale,weight_decay,seed,steps,train_size,batch_size,n_train_max,exact_n,extrap,greedy_n,greedy_extrap,maxtok50,c25,c50,c100,coin50,pb1,pb20,pb100,pb300,coin_dev_ood,coin_flat_ood,L0,zero_frac
+runs/rule_settled/nope_fixed_wd1.0_seed104,final,30000,rule_settled,anbn,ternary,fixed,1.0,104,30000,500,256,21,210,189,285,264,0.0,0.01,0.01,0.04,0.03,0.304,0.3,0.302,0.303,0.003,0.001,1110,0.912
+runs/rule_settled/nope_fixed_wd1.0_seed104,best_near,30000,rule_settled,anbn,ternary,fixed,1.0,104,30000,500,256,21,210,189,285,264,0.0,0.01,0.01,0.04,0.03,0.304,0.3,0.302,0.303,0.003,0.001,1110,0.912
+runs/rule_settled/nope_fixed_wd1.0_seed104,polished_guarded,30000,rule_settled,anbn,ternary,fixed,1.0,104,30000,500,256,21,120,99,245,224,0.13,0.14,0.23,0.39,2.72,0.31,0.318,0.319,0.319,0.019,0.0,334,0.974
+runs/rule_settled/nope_fixed_wd1.0_seed104,polished_guarded_greedy,30000,rule_settled,anbn,ternary,fixed,1.0,104,30000,500,256,21,3,-18,300,279,1.0,4.04,7.42,14.02,-0.5,0.312,0.277,0.274,0.273,0.027,0.001,275,0.978

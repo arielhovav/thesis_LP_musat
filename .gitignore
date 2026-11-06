@@ -1,0 +1,17 @@
+# training outputs: hundreds of MB, regenerable from the commands in the handoffs
+runs/
+runs_lm/
+pythia/
+# scratch and caches
+__pycache__/
+*.pyc
+.venv/
+.idea/
+*.log
+# big checkpoints: everything except the golden nets (which are ~56 KB each and are tracked)
+*.pt
+!golden*.pt
+!model_polished.pt
+!digital_*.pt
+# corpora for the LM experiment
+corpus.txt

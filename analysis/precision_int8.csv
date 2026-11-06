@@ -1,0 +1,9 @@
+ckpt,task,quant,L0,rail_M,DH_base,bits_needed,DH_at_needed,H_natural,H_precision,bits_emb,bits_attn.wq,bits_attn.wk,bits_attn.wv,bits_attn.wo,bits_ff_in,bits_ff_in.bias,bits_ff_out,bits_ff_out.bias,bits_head,bits_head.bias
+C:\Users\ariel\PycharmProjects\thesis_LP_musat\runs\bias\int8_wd1.0_p0.3_seed100\model.pt,anbn,int8,3328,0.3,1480.9,6,1484.0,71983,65365,5,1,1,3,1,4,1,4,1,4,2
+C:\Users\ariel\PycharmProjects\thesis_LP_musat\runs\bias\int8_wd1.0_p0.3_seed101\model.pt,anbn,int8,3410,0.45,1498.6,7,1498.6,73757,70385,5,4,1,3,4,4,1,3,1,4,2
+C:\Users\ariel\PycharmProjects\thesis_LP_musat\runs\bias\int8_wd1.0_p0.3_seed102\model.pt,anbn,int8,3038,0.45,1499.7,7,1499.7,65710,62707,5,1,1,3,3,5,1,3,4,4,2
+C:\Users\ariel\PycharmProjects\thesis_LP_musat\runs\bias\int8_wd1.0_p0.3_seed100\polish_natural_s0.pt,anbn,int8,16,6.35,1492.6,8,1492.6,346,346,5,,,6,1,1,,1,1,7,
+C:\Users\ariel\PycharmProjects\thesis_LP_musat\runs\bias\int8_wd1.0_p0.3_seed101\polish_natural_s0.pt,anbn,int8,14,4.9,1499.7,10,1501.0,303,331,5,,,1,1,1,,1,1,7,
+C:\Users\ariel\PycharmProjects\thesis_LP_musat\runs\bias\int8_wd1.0_p0.3_seed102\polish_natural_s0.pt,anbn,int8,19,5.9,1508.2,8,1508.2,411,411,8,,,1,5,1,,3,1,5,
+golden11.pt,anbn,int8,11,6.35,1510.7,4,1518.1,238,194,1,,,1,1,,,,,1,4
+golden_digital15_deep_polish.pt,anbn,ternary,14,1.0,1510.9,1,1510.9,205,205,1,,,1,1,,,,,1,1

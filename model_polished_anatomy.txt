@@ -1,0 +1,107 @@
+anatomize2: model_polished.pt
+task=anbn attn=softmax quant=int8/fixed pos=nope d=32 d_ff=128 loops=6 wd=0.0
+
+=== 1. structural census ===
+               emb:     4 non-zero
+     block.attn.wq:     0 non-zero
+     block.attn.wk:     0 non-zero
+     block.attn.wv:     1 non-zero
+     block.attn.wo:     1 non-zero
+       block.ff_in:     0 non-zero
+  block.ff_in.bias:     0 non-zero
+      block.ff_out:     0 non-zero
+  block.ff_out.bias:     0 non-zero
+              head:     2 non-zero
+         head.bias:     2 non-zero
+  L0 = 10 (of which 2 bias)   live residual dims = 3/32   live FFN hidden units = 0/128
+  dead weights (into/out of dead hidden units): ff_in 0, ff_out 0  (removable at zero cost)
+  |H| Musat natural code (log2 N + log2(2m) per weight) = 216 bits
+  |H| Abudy-style structural (live-unit addressing, 2 value bits/weight) = 76 bits (20 for units + connections)
+  |H| Abudy fraction code (sign + prefix-free numerator/denominator of k/20) = 242 bits (value bits 186)
+  live hidden units: []
+
+enumerated 2010 prefixes up to i=60 (+2 off-grammar per boundary)
+
+=== 2. prefix-mean reduction check (zero Wq, Wk) ===
+  max |delta log2 p| over all prefixes & symbols = 0.000 bits; mean = 0.0000; argmax unchanged on 100.0% of prefixes
+  => attention is (effectively) uniform: the network IS a function of (token, prefix counts); the table below is complete.
+
+=== 3. I/O table ===
+     i  b->close at j (exact: i)  P(b|a^i)
+     1              1         ok     0.299
+     2              2         ok     0.299
+     3              3         ok     0.299
+     4              4         ok     0.299
+     5              5         ok     0.299
+     6              6         ok     0.299
+     7              7         ok     0.299
+     8              8         ok     0.299
+     9              9         ok     0.299
+    10             10         ok     0.299
+    11             11         ok     0.299
+    12             12         ok     0.299
+    15             15         ok     0.299
+    20             20         ok     0.299
+    25             25         ok     0.299
+    30             30         ok     0.299
+    31             30          X     0.299
+    32             31          X     0.299
+    33             32          X     0.299
+    34             33          X     0.299
+    35             34          X     0.299
+    36             35          X     0.299
+    37             36          X     0.299
+    38             37          X     0.299
+    39             38          X     0.299
+    40             39          X     0.299
+    41             40          X     0.299
+    42             41          X     0.299
+    43             42          X     0.299
+    44             43          X     0.299
+    45             44          X     0.299
+    46             45          X     0.299
+    47             46          X     0.299
+    48             47          X     0.299
+    49             48          X     0.299
+    50             49          X     0.299
+    51             50          X     0.299
+    52             51          X     0.299
+    53             52          X     0.299
+    54             53          X     0.299
+    55             54          X     0.299
+    56             55          X     0.299
+    57             56          X     0.299
+    58             57          X     0.299
+    59             58          X     0.299
+    60             59          X     0.299
+  first argmax failure per phase: b-run at i=31
+  -> model_polished_io_table.csv
+
+=== 4. neuron readout (last loop, last position, on-grammar prefixes) ===
+  units tracking i-j in the b-run (|r|):  res1:-0.84  res0:+0.00  res2:+0.00
+  units tracking i in the a-run (the <bos>-dilution / coin carrier):  res1:-0.66  res0:+0.00  res2:+0.00
+  phase detectors (largest mean gap across runs):  res1:[-5982.52,-2237.36]  res0:[32.81,-33.94]  res2:[0.00,10.75]
+  res1 activation vs j at fixed i (b-run):
+    i=10: -4763.13 -3889.42 -3140.52 -2491.48 -1923.57 -1422.47 -977.05 -578.52 -219.84 +104.68
+    i=20: -5495.92 -4970.22 -4488.33 -4044.99 -3635.76 -3256.84 -2904.98 -2577.40 -2271.65 -1985.62 -1717.47 -1465.58 -1228.50 -1004.97 -793.86 -594.15 ...
+    i=30: -5770.71 -5395.99 -5043.31 -4710.79 -4396.73 -4099.66 -3818.22 -3551.21 -3297.55 -3056.27 -2826.47 -2607.37 -2398.22 -2198.37 -2007.20 -1824.18 ...
+  res0 activation vs j at fixed i (b-run):
+    i=10: -33.94 -33.94 -33.94 -33.94 -33.94 -33.94 -33.94 -33.94 -33.94 -33.94
+    i=20: -33.94 -33.94 -33.94 -33.94 -33.94 -33.94 -33.94 -33.94 -33.94 -33.94 -33.94 -33.94 -33.94 -33.94 -33.94 -33.94 ...
+    i=30: -33.94 -33.94 -33.94 -33.94 -33.94 -33.94 -33.94 -33.94 -33.94 -33.94 -33.94 -33.94 -33.94 -33.94 -33.94 -33.94 ...
+  res2 activation vs j at fixed i (b-run):
+    i=10: +10.75 +10.75 +10.75 +10.75 +10.75 +10.75 +10.75 +10.75 +10.75 +10.75
+    i=20: +10.75 +10.75 +10.75 +10.75 +10.75 +10.75 +10.75 +10.75 +10.75 +10.75 +10.75 +10.75 +10.75 +10.75 +10.75 +10.75 ...
+    i=30: +10.75 +10.75 +10.75 +10.75 +10.75 +10.75 +10.75 +10.75 +10.75 +10.75 +10.75 +10.75 +10.75 +10.75 +10.75 +10.75 ...
+
+=== 5. channels and the program ===
+  3 live residual dims form 2 channels (dims identical up to sign, |r|>0.995). gain = replication count.
+  ch0  gain 2  tracks phase/const            dims [+0, -2]
+  ch1  gain 1  tracks i-j@b-run r=-0.84      dims [+1]
+  hidden units (pre-activation = sum of channel weights x channel value + bias, in units of delta; then ReLU):
+  output logits (from channels, via the head + head bias; LN_f gain omitted):
+    logit(a) = +122*ch0 +127
+    logit(b) = +110
+    logit(#) = +115*ch1
+  (figure failed: zero-size array to reduction operation maximum which has no identity)
+  -> model_polished_neurons.csv
