@@ -269,6 +269,7 @@ def main():
                     help="bits per surviving weight: a number, 'natural' "
                          "(log2 N_quantizable + log2(2m), default), 'sgd' (the price "
                          "implied by this run's wd, delta and training tokens: sum k^2), "
+                         "'l1' (coupled-L1 price, wd*T*delta/ln2 bits per unit level, see --sgd_wd), "
                          "'fraction' (Abudy's magnitude-aware value code), 'elias' (sign + "
                          "universal integer code of |k|: the log-magnitude price) or "
                          "'codebook' (distinct |levels| paid once + log2 K index per weight)")
@@ -299,11 +300,21 @@ def main():
     n_tokens = sum(len(s) for s in train.seqs)
     hbits_label = args.hbits
     price_sumsq = False                      # False: |H| = L0 x hbits; True: sum(k^2) x hbits
+    price_sumabs = False                     # True: |H| = sum|k| x hbits (coupled-L1 price)
     if args.hbits == "natural":
         args.hbits = bits_per_weight(model)
         print(f"task={task.name}  |H| = L0 x {args.hbits:.2f} bits (natural code; "
               f"N = {model.param_report()['quantizable_params']} slots incl. "
               f"{model.param_report()['quantizable_bias_slots']} bias slots)")
+    elif args.hbits == "l1":
+        price_sumabs = True
+        wd_price = args.sgd_wd if args.sgd_wd is not None else cfg["weight_decay"]
+        if wd_price <= 0:
+            raise SystemExit("--hbits l1 needs a positive weight decay: pass --sgd_wd (natural-code-equivalent: "
+                             f"{bits_per_weight(model) * LN2 / (n_tokens * cfg['fixed_delta']):.5f})")
+        args.hbits = wd_price * n_tokens * cfg["fixed_delta"] / LN2
+        print(f"task={task.name}  |H| = {args.hbits:.2f} bits x sum|k|  (coupled-L1 price: wd={wd_price} x T={n_tokens} "
+              f"x delta={cfg['fixed_delta']} / ln2 per level; natural would be {bits_per_weight(model):.2f} bits/weight)")
     elif args.hbits == "sgd":
         price_sumsq = True
         wd_price = args.sgd_wd if args.sgd_wd is not None else cfg["weight_decay"]
@@ -348,6 +359,9 @@ def main():
                 bits += float(sum(frac_table[int(k)] for k in ks.tolist()))
         return genome.l0() * addr_bits + bits
 
+    def h_l1(genome):
+        return float(args.hbits) * sum(float(t.abs().sum()) for t in genome.tensors)
+
     def h_elias(genome):
         """Universal integer code for the level: sign bit + Elias-gamma(|k|), i.e.
         ~2 log2 k + 2 bits. The Kolmogorov-honest price of a magnitude: constant
@@ -373,7 +387,9 @@ def main():
         K = max(len(levels), 1)
         return genome.l0() * (addr_bits + math.log2(K)) + K * math.log2(2 * m_lv)
 
-    if hbits_label == "elias":
+    if hbits_label == "l1":
+        price_fn = h_l1
+    elif hbits_label == "elias":
         price_fn = h_elias
         print(f"task={task.name}  |H| = L0 x {addr_bits:.2f} address bits + sign + Elias-gamma(|k|) "
               f"(k=1: 2.0 bits, k=2: 5.0, k=7: 9.8, k=127: 16.0; log-magnitude price)")
@@ -506,8 +522,8 @@ def main():
     ck2["config"]["polish"] = {
         "p_end": p_use, "train_size": n_str, "hbits": hbits_label,
         "hbits_value": args.hbits,
-        "price": hbits_label if hbits_label in ("fraction", "codebook", "elias") else ("sumsq" if price_sumsq else "L0"),
-        "sgd_wd": (args.sgd_wd if args.sgd_wd is not None else cfg["weight_decay"]) if price_sumsq else None,
+        "price": hbits_label if hbits_label in ("fraction", "codebook", "elias", "l1") else ("sumsq" if price_sumsq else "L0"),
+        "sgd_wd": (args.sgd_wd if args.sgd_wd is not None else cfg["weight_decay"]) if (price_sumsq or price_sumabs) else None,
         "guard": guard_ns, "guard_mode": args.guard_mode if guard_ns else None,
         "guard_bits": args.guard_bits if guard_ns else None,
         "guard_coin": args.guard_coin, "seed": args.seed, "gens": args.gens,
